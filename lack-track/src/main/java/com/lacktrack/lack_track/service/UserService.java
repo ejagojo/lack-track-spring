@@ -18,31 +18,52 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    // Retrieve all users
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    // Retrieve a user by their ID
     public User getUserById(UUID userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
     }
 
+    // Retrieve a user by their email
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    // Create a new user
     public User createUser(User user) {
+        // Additional validation can be added here if needed
         return userRepository.save(user);
     }
 
-    public User updateUser(UUID userID, User updatedUser) {
+    // Update an existing user
+    public User updateUser(UUID userId, User updatedUser) {
         User existingUser = getUserById(userId);
+
+        // Validate incoming data (e.g., non-null fields)
+        if (updatedUser.getName() == null || updatedUser.getName().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
+        if (updatedUser.getEmail() == null || updatedUser.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be null or empty");
+        }
+
+        // Update modifiable fields
         existingUser.setName(updatedUser.getName());
         existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setPassword(updatedUser.getPassword());
+
+        // Save the updated user
         return userRepository.save(existingUser);
     }
 
+    // Delete a user by their ID
     public void deleteUser(UUID userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found with ID: " + userId);
+        }
         userRepository.deleteById(userId);
     }
 }

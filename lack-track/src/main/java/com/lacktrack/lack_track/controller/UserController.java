@@ -32,11 +32,11 @@ public class UserController {
 
     @PutMapping("/{userId}")
     public User updateUser(@PathVariable UUID userId, @RequestBody User user) {
-        return userService.updateUser(userId, user)
+        return userService.updateUser(userId, user);
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteUser(@Pathvariable UUID userId) {
+    public void deleteUser(@PathVariable UUID userId) {
         userService.deleteUser(userId);
     }
 }
